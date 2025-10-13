@@ -19,7 +19,7 @@ export default function MenuLayout({
   return (
                 <div className="content-container">
                   <Top />
-                  <MiningRewardPopup />
+                  {/* <MiningRewardPopup /> */}
                   <div className="content-page">
                     {children}
                   </div>

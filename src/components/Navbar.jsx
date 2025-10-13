@@ -39,12 +39,12 @@ const Navbar = () => {
                 <div onClick={()=>router.push('/menu/wallet')} className='bottom-btn'>
                     <WalletOutlined style={{color: selectedKey == 'wallet' ? '#fff' : '#ACC4E6', fontSize: 20}}/>
                 </div>
-                <div onClick={()=>router.push('/menu/mining')} className='bottom-btn'>
+                {/* <div onClick={()=>router.push('/menu/mining')} className='bottom-btn'>
                     <LuPickaxe style={{color: selectedKey == 'mining' ? '#fff' : '#ACC4E6', fontSize: 20, marginTop: 4}}/>
                 </div>
                 <div onClick={()=>router.push('/menu/referral')} className='bottom-btn'>
                     <TeamOutlined style={{color: selectedKey == 'referral' ? '#fff' : '#ACC4E6', fontSize: 20}}/>
-                </div>
+                </div> */}
                 <div onClick={()=>router.push('/menu/myinfo')} className='bottom-btn'>
                     <UserOutlined style={{color: selectedKey == 'myinfo' ? '#fff' : '#ACC4E6', fontSize: 20}}/>
                 </div>

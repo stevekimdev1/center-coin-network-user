@@ -6,10 +6,12 @@ import httpClient from "@/src/lib/util/httpclient";
 import { App } from "antd";
 import moment from "moment";
 import { useCoin } from "@/src/context/CoinContext";
+import { useString } from '@/src/context/StringContext';
 
 const TranslogModal = ({ translogModalVisible, setTranslogModalVisible, coinType }) => {
   const { message } = App.useApp();
   const { coinList } = useCoin();
+  const { string } = useString();
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [pagination, setPagination] = React.useState({
@@ -34,7 +36,7 @@ const TranslogModal = ({ translogModalVisible, setTranslogModalVisible, coinType
         total: result.data.total,
       });
     } catch (error) {
-      message.error('거래내역을 불러오는데 실패했습니다.');
+      message.error(string.transactionHistoryLoadError);
     } finally {
       setLoading(false);
     }
@@ -61,15 +63,21 @@ const TranslogModal = ({ translogModalVisible, setTranslogModalVisible, coinType
         case 'E2I': return '#1771d8';
         case 'I2E': return '#FF6B6B';
         case 'SEND': return from == myAddress ? '#4ECDC4' : '#ff9f1c';
+        case 'MINING': return '#685ee8';
+        case 'EVENT': return '#f2770b'; // 오렌지색 (이벤트)
+        case 'WITHDRAW': return '#e74c3c'; // 빨간색 (출금)
         default: return '#B8C2CC';
       }
     };
 
     const getLabel = (type) => {
       switch(type) {
-        case 'E2I': return '외부입금';
-        case 'I2E': return '외부송금 ' + (status == 'SUCCESS' ? '완료' : status == 'FAIL' ? '실패' : '진행중');
-        case 'SEND': return from == myAddress ? '송금' : '입금';
+        case 'E2I': return string.externalDeposit;
+        case 'I2E': return string.externalTransfer + ' ' + (status == 'SUCCESS' ? string.externalTransferComplete : status == 'FAIL' ? string.externalTransferFailed : string.externalTransferInProgress);
+        case 'SEND': return from == myAddress ? string.send : string.receive;
+        case 'MINING': return string.mining;
+        case 'EVENT': return string.event;
+        case 'WITHDRAW': return string.withdraw;
         default: return type;
       }
     };
@@ -83,7 +91,7 @@ const TranslogModal = ({ translogModalVisible, setTranslogModalVisible, coinType
 
   return (
     <Drawer
-      title={`${coinList.find(coin => coin.coinType === coinType)?.name} 거래내역`}
+      title={`${coinList.find(coin => coin.coinType === coinType)?.name} ${string.transactionHistoryTitle}`}
       placement="right"
       closable={true}
       onClose={() => setTranslogModalVisible(false)}

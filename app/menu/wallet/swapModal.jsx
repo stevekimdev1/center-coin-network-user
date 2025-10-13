@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "antd";
-import string from "@/src/language/StringKo";
 import moment from "moment";
 import { comma } from "@/src/lib/util/numberUtil";
 import httpClient from "@/src/lib/util/httpclient";
@@ -8,9 +7,11 @@ import { urls } from "@/src/const";
 import { App } from "antd";
 import { SwapOutlined } from "@ant-design/icons";
 import { useCoin } from "@/src/context/CoinContext";
+import { useString } from "@/src/context/StringContext";
 
 const SwapModal = ({ swapModalVisible, setSwapModalVisible }) => {
     const { coinList, reloadCoinList } = useCoin();
+    const { string } = useString();
     const { message } = App.useApp();
     const [swapAmount, setSwapAmount] = useState(0);
     const [fromCoinType, setFromCoinType] = useState(401);
@@ -27,7 +28,7 @@ const SwapModal = ({ swapModalVisible, setSwapModalVisible }) => {
     
   const swap = async () => {
     if (!swapAmount || isNaN(swapAmount)) {
-      message.error('수량을 입력해주세요');
+      message.error(string.swapAmountRequired);
       return;
     }
 
@@ -37,21 +38,24 @@ const SwapModal = ({ swapModalVisible, setSwapModalVisible }) => {
       if (result.data === 'SUCCESS') {
         reloadCoinList();
         setSwapModalVisible(false);
-        message.success('교환이 완료되었습니다.');
+        message.success(string.swapComplete);
       } else {
         if (result.data === 'NO_BALANCE') message.error(string.withdrawNoBalance);
-        else if (result.data === 'FAIL') message.error('처리 중 오류가 발생했습니다.');
-        else if (result.data === 'INVALID_AMOUNT') message.error('유효하지 않은 금액입니다.');
-        else if (result.data === 'INSUFFICIENT_BALANCE') message.error('잔액이 부족합니다.');
+        else if (result.data === 'FAIL') message.error(string.swapProcessingError);
+        else if (result.data === 'INVALID_AMOUNT') message.error(string.invalidAmount);
+        else if (result.data === 'INSUFFICIENT_BALANCE') message.error(string.withdrawNoBalance);
         else message.error(string.errorDetail);
       }
     } catch (error) {
       console.error('Error during swap:', error);
     }
   };
+
+  const fromCoinName = coinList.find(coin => coin.coinType === fromCoinType)?.name || '';
+
     return (
         <Modal
-            title={'SWAP'}
+            title={string.swapTitle}
             open={swapModalVisible}
             onOk={swap}
             okText={string.ok}
@@ -61,7 +65,7 @@ const SwapModal = ({ swapModalVisible, setSwapModalVisible }) => {
         >
             <div>
                 <div>
-                    교환할 {coinList.find(coin => coin.coinType === fromCoinType)?.name}의 수량을 입력해주세요.<br />
+                    {string.swapDescription.replace('{coinName}', fromCoinName)}<br />
                     {/* 수수료: {fee} SKR */}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px', marginBottom: '20px' }}>
@@ -70,7 +74,7 @@ const SwapModal = ({ swapModalVisible, setSwapModalVisible }) => {
                             className="home-form-input"
                             autoComplete='false'
                             type='number'
-                            placeholder="수량을 입력하세요"
+                            placeholder={string.swapAmountPlaceholder}
                             onChange={(e) => setSwapAmount(e.target.value)}
                             value={swapAmount}
                             style={{ width: '100%', fontSize: '14px' }}

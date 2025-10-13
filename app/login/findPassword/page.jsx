@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useString } from '@/src/context/StringContext';
 
 export default function FindPassword() {
   const [form] = Form.useForm();
@@ -15,6 +16,7 @@ export default function FindPassword() {
   const [isVerified, setIsVerified] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const { message, modal } = App.useApp();
+  const { string } = useString();
 
   useEffect(() => {
     let interval;
@@ -47,20 +49,20 @@ export default function FindPassword() {
 
       if (response.data.result === 'INVALID_EMAIL_FORMAT') {
         modal.error({
-          title: '이메일 형식 오류',
-          content: '올바른 이메일 형식이 아닙니다.',
+          title: string.emailFormatError,
+          content: string.emailFormat,
         });
       }
       if (response.data.result === 'USER_NOT_FOUND') {
         modal.error({
-          title: '사용자 없음',
-          content: '등록되지 않은 이메일입니다.',
+          title: string.userNotFound,
+          content: string.userNotFoundMessage,
         });
       }
       if (response.data.result === 'RECENTLY_SENT') {
         modal.error({
-          title: '재전송 제한',
-          content: '최근에 발송된 인증메일이 있습니다. 잠시 후 다시 시도해주세요.',
+          title: string.recentlySent,
+          content: string.recentlySentMessage,
         });
       }
       form.setFieldValue('token', response.data.token); // 토큰 저장
@@ -79,15 +81,15 @@ export default function FindPassword() {
       const response = await httpClient.get(urls.emailCodeVerify.replace('%s', token).replace('%s', code));
       if (response.data === 'INVALID') {
         modal.error({
-          title: '인증코드 오류',
-          content: '인증코드가 올바르지 않습니다.',
+          title: string.verificationCodeError,
+          content: string.verificationCodeInvalid,
         });
         return;
       }
       if (response.data === 'EXPIRED') {
         modal.error({
-          title: '인증코드 만료',
-          content: '인증코드가 만료되었습니다.',
+          title: string.verificationCodeExpired,
+          content: string.verificationCodeExpiredMessage,
         });
         return;
       }
@@ -100,7 +102,7 @@ export default function FindPassword() {
     if (!isVerified) {
       form.setFields([{
         name: 'verificationCode',
-        errors: ['인증이 필요합니다']
+        errors: [string.verificationRequired]
       }]);
       return;
     }
@@ -113,33 +115,33 @@ export default function FindPassword() {
       });
       if (response.data === 'SUCCESS') {
         modal.success({
-          title: '비밀번호 변경 완료',
-          content: '비밀번호가 성공적으로 변경되었습니다. 새로운 비밀번호로 로그인해주세요.',
+          title: string.passwordChangeSuccess,
+          content: string.passwordChangeSuccessMessage,
           onOk: () => router.push('/login')
         });
         return;
       }
 
       const modalConfig = {
-        title: '비밀번호 변경 실패',
+        title: string.passwordChangeFailed,
         content: ''
       };
 
       switch (response.data) {
         case 'USER_NOT_FOUND':
-          modalConfig.content = '사용자를 찾을 수 없습니다.';
+          modalConfig.content = string.userNotFoundMessage;
           break;
         case 'INVALID_PASSWORD_FORMAT':
-          modalConfig.content = '비밀번호 형식이 올바르지 않습니다.';
+          modalConfig.content = string.invalidPasswordFormat;
           break;
         case 'EXPIRED':
-          modalConfig.content = '인증이 만료되었습니다. 다시 시도해주세요.';
+          modalConfig.content = string.expired;
           break;
         case 'INVALID_CODE':
-          modalConfig.content = '인증코드가 올바르지 않습니다.';
+          modalConfig.content = string.invalidCode;
           break;
         default:
-          modalConfig.content = '비밀번호 변경 중 오류가 발생했습니다.';
+          modalConfig.content = string.passwordChangeFailedMessage;
       }
 
       modal.error(modalConfig);
@@ -156,8 +158,8 @@ export default function FindPassword() {
       <Link href="/login" className="backIcon">
                             <LeftOutlined />
                         </Link>
-          <h1>비밀번호 찾기</h1>
-          <p>가입하신 이메일로 인증 후 비밀번호를 변경하실 수 있습니다.</p>
+          <h1>{string.findPassword}</h1>
+          <p>{string.findPasswordDesc}</p>
         </div>
 
         <Form
@@ -170,12 +172,12 @@ export default function FindPassword() {
             <Form.Item
               name="email"
               rules={[
-                { required: true, message: '이메일을 입력해주세요' },
-                { type: 'email', message: '올바른 이메일 형식이 아닙니다' }
+                { required: true, message: string.emailRequired },
+                { type: 'email', message: string.emailFormat }
               ]}
             >
               <Input 
-                placeholder="이메일을 입력해주세요" 
+                placeholder={string.emailInput} 
                 prefix={<UserOutlined />}
                 disabled={isVerified}
               />
@@ -184,12 +186,12 @@ export default function FindPassword() {
             <Form.Item
               name="verificationCode"
               rules={[
-                { required: true, message: '인증코드를 입력해주세요' }
+                { required: true, message: string.verificationCodeRequired }
               ]}
             >
               <div className="inputWithButton">
                 <Input
-                  placeholder="인증코드 6자리를 입력해주세요"
+                  placeholder={string.verificationCodeInput}
                   prefix={<SafetyCertificateOutlined />}
                   disabled={isVerified}
                 />
@@ -199,11 +201,11 @@ export default function FindPassword() {
                     onClick={handleSendCode}
                     className="verificationButton"
                   >
-                    인증코드받기
+                    {string.getVerificationCode}
                   </button>
                 ) : isVerified ? (
                   <span className="verificationStatus">
-                    인증완료 ({formatTime(timer)})
+                    {string.verificationComplete} ({formatTime(timer)})
                   </span>
                 ) : timer === 0 ? (
                   <button
@@ -211,7 +213,7 @@ export default function FindPassword() {
                     onClick={handleSendCode}
                     className="verificationButton"
                   >
-                    재전송
+                    {string.resend}
                   </button>
                 ) : (
                   <>
@@ -220,7 +222,7 @@ export default function FindPassword() {
                       onClick={handleVerifyCode}
                       className="verificationButton"
                     >
-                      코드확인
+                      {string.verifyCode}
                     </button>
                     <span className="timer" style={{zIndex: 1000}}>({formatTime(timer)})</span>
                   </>
@@ -231,15 +233,15 @@ export default function FindPassword() {
             <Form.Item
               name="newPassword"
               rules={[
-                { required: true, message: '새 비밀번호를 입력해주세요' },
+                { required: true, message: string.newPasswordRequired },
                 { 
                   pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$!%*#?&^]{8,15}$/,
-                  message: '8-15자의 영문, 숫자, 특수문자를 포함해야 합니다'
+                  message: string.newPasswordFormat
                 }
               ]}
             >
               <Input.Password 
-                placeholder="새 비밀번호 (8-15자의 영문, 숫자, 특수문자 조합)"
+                placeholder={string.newPasswordInput}
                 prefix={<LockOutlined />}
               />
             </Form.Item>
@@ -248,19 +250,19 @@ export default function FindPassword() {
               name="confirmNewPassword"
               dependencies={['newPassword']}
               rules={[
-                { required: true, message: '새 비밀번호를 다시 입력해주세요' },
+                { required: true, message: string.confirmNewPasswordRequired },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue('newPassword') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('비밀번호가 일치하지 않습니다'));
+                    return Promise.reject(new Error(string.confirmNewPasswordMismatch));
                   },
                 }),
               ]}
             >
               <Input.Password 
-                placeholder="새 비밀번호 확인"
+                placeholder={string.confirmNewPasswordInput}
                 prefix={<LockOutlined />}
               />
             </Form.Item>
@@ -268,7 +270,7 @@ export default function FindPassword() {
 
           <div className="buttonContainer">
             <button type="submit" className="submitButton">
-              비밀번호 변경
+              {string.changePassword}
             </button>
           </div>
         </Form>

@@ -20,3 +20,31 @@ export const getCoinCategory = (category) => {
       return '';
   }
 }
+export const getCoinCategoryByCoinType = (coinType) => {
+  switch (coinType) {
+    case 701:
+      return 'Kaia';
+    case 401:
+      return 'BSC (Binance Smart Chain)';
+    case 402:
+      return 'BSC (Binance Smart Chain)';
+    case 403:
+      return 'Bitcoin';
+    case 404:
+      return 'Ethereum';
+    case 405:
+      return 'XRP';
+    case 406:
+      return 'Tron';
+    case 7:
+      return 'KAIA';
+    case 407:
+      return 'Solana';
+    case 408:
+      return 'Cardano';
+    case 4:
+      return 'BSC (Binance Smart Chain)';
+    default:
+      return '';
+  }
+}

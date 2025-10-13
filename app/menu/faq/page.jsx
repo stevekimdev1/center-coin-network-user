@@ -9,14 +9,14 @@ import { urls } from "@/src/const";
 import { Suspense } from 'react';
 import { useString } from '@/src/context/StringContext';
 
-const NoticePageContent = () => {
+const FaqPageContent = () => {
   const searchParams = useSearchParams();
   const defaultIdx = searchParams.get('idx');
   const [expandedIdx, setExpandedIdx] = useState(defaultIdx ? parseInt(defaultIdx) : null);
   const { string } = useString();
 
   const fetchNoticeList = async ({ pageParam = 1 }) => {
-    const response = await httpClient.get(urls.boardList.replace('%s', 'NOTICE').replace('%s', pageParam).replace('%s', 10));
+    const response = await httpClient.get(urls.boardList.replace('%s', 'FAQ').replace('%s', pageParam).replace('%s', 10));
     return response.data;
   };
 
@@ -93,10 +93,10 @@ const NoticePageContent = () => {
     </div>
   );
 };
-export default function NoticePage() {
+export default function FaqPage() {
   return (
       <Suspense fallback={<div>Loading...</div>}>
-          <NoticePageContent />
+          <FaqPageContent />
       </Suspense>
   );
 }

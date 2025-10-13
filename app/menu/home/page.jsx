@@ -1,79 +1,201 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button, App } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import Image from 'next/image';
 import RollingList from './rollingList';
+import Image from 'next/image';
 import { useUser } from '@/src/context/UserContext';
 import { useRouter } from 'next/navigation';
 import httpClient from "@/src/lib/util/httpclient";
 import { urls } from '@/src/const';
 import { useCoin } from '@/src/context/CoinContext';
 import { comma } from "@/src/lib/util/numberUtil";
+import Link from 'next/link';
+import { useString } from '@/src/context/StringContext';
+import Script from 'next/script';
+import MyImage from '@/src/components/MyImage';
 const bonusUserList = [
   { userId: 'sad***', symbol: 'BTC', amount: '0.001' },
   { userId: 'dsf***', symbol: 'ETH', amount: '0.02' },
-  { userId: 'kim***', symbol: 'XRP', amount: '5' },
+  { userId: 'ief***', symbol: 'BTC', amount: '0.002' },
+  { userId: 'bbt***', symbol: 'TRX', amount: '15' },
+  { userId: 'ria***', symbol: 'ETH', amount: '0.03' },
+  { userId: 'sad***', symbol: 'SOL', amount: '0.5' },
+  { userId: 'twa***', symbol: 'ADA', amount: '100' },
+  { userId: 'bfd***', symbol: 'XRP', amount: '20' },
+  { userId: 'fsa***', symbol: 'BNB', amount: '0.01' },
+  { userId: 'kim***', symbol: 'BTC', amount: '0.0015' },
+  { userId: 'lee***', symbol: 'TRX', amount: '10' },
+  { userId: 'par***', symbol: 'ETH', amount: '0.025' },
+  { userId: 'cho***', symbol: 'SOL', amount: '0.3' },
+  { userId: 'jun***', symbol: 'ADA', amount: '80' },
+  { userId: 'yoo***', symbol: 'XRP', amount: '12' },
+  { userId: 'jan***', symbol: 'BNB', amount: '0.02' },
+  { userId: 'hon***', symbol: 'BTC', amount: '0.003' },
+  { userId: 'moo***', symbol: 'TRX', amount: '8' },
+  { userId: 'ahn***', symbol: 'ETH', amount: '0.018' },
+  { userId: 'seo***', symbol: 'SOL', amount: '0.7' },
+  { userId: 'hwa***', symbol: 'ADA', amount: '60' },
+  { userId: 'ohh***', symbol: 'XRP', amount: '25' },
 ];
 
 export default function Home() {
   const [rollingIndex, setRollingIndex] = useState(0);
   const [feedList, setFeedList] = useState([]);
   const [noticeList, setNoticeList] = useState([]);
+  const [referralList, setReferralList] = useState([]);
   const { user, setUser } = useUser();
   const router = useRouter();
   const { coinList } = useCoin();
   const { message } = App.useApp();
-
+  const [baseReward, setBaseReward] = useState(0);
+  const [originalBaseReward, setOriginalBaseReward] = useState(0);
+  const intervalRef = useRef(null);
+  const { string } = useString();
+  const [expandedFeedId, setExpandedFeedId] = useState(null);
+  const [userGradeCriteria, setUserGradeCriteria] = useState([0, 100000000, 100000000, 100000000, 100000000, 100000000, 100000000, 100000000]);
+  // 인피니트 스크롤 관련 상태
+  const [feedPage, setFeedPage] = useState(1);
+  const [feedLoading, setFeedLoading] = useState(false);
+  const [feedHasMore, setFeedHasMore] = useState(true);
+  const [showAd, setShowAd] = useState(false);
+  const observerRef = useRef();
+  const [gradeCoin, setGradeCoin] = useState({});
   useEffect(() => {
     getMyInfo();
-    const interval = setInterval(() => {
-      getMyInfo();
-    }, 1000);
+    fetchSystemSetting();
+    getFeedList();
+    getNoticeList();
+    getReferralList();
 
-    return () => clearInterval(interval);
+
   }, []);
+  useEffect(() => {
+    console.log(coinList)
+  }, [coinList]);
+
+  // 매초 baseReward를 랜덤하게 갱신하는 useEffect
+  useEffect(() => {
+    if (originalBaseReward > 0) {
+      intervalRef.current = setInterval(() => {
+        // -10%에서 +10% 사이의 랜덤한 비율 생성
+        const randomRatio = 0.95 + Math.random() * 0.1; // 0.9 ~ 1.1 (90% ~ 110%)
+        const newBaseReward = originalBaseReward * randomRatio;
+        setBaseReward(newBaseReward);
+      }, 1000);
+
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+      };
+    }
+  }, [originalBaseReward]);
 
   useEffect(() => {
-    // 공지사항 API 호출 (예시)
-    // fetch('/api/notice')
-    //   .then(res => res.json())
-    //   .then(data => setNoticeList(data));
 
-    // 더미 데이터 처리
-    setNoticeList([
-      { date: '2025-06-19', title: '시스템 점검 안내' },
-      { date: '2025-06-18', title: 'CAI 보상 업데이트' },
-      { date: '2025-06-17', title: '새 앱 출시' },
-    ]);
-
-    // 피드 API 호출 (예시)
-    // fetch('/api/feed')
-    //   .then(res => res.json())
-    //   .then(data => setFeedList(data));
-
-    // 더미 피드 데이터 처리
-    setFeedList([
-      {
-        link: 'https://crypto.news/this-coin-under-0-002-gains-attention-as-a-potential-alternative-to-xrp-in-next-bull-run/',
-        hashtag: '#Partner Content #sponsored',
-        date: '2025-06-19',
-        image: 'https://resources.cryptocompare.com/news/73/46360053.jpeg',
-        title: 'This coin under $0.002 gains attention as a potential alternative to XRP in next bull run',
-        content: 'Disclosure: This article does not represent investment advice. The content and materials featured on this page are for educational purposes only. As XRP eyes $2.50, retail investors explore low-cost breakout bets like LILPEPE, priced at just $0.0012. Table of Contents XRP: The giant awakens, but growth may be limited LILPEPE vs. XRP: Possible return on investment How to buy LILPEPE: Step by step Conclusion As Ripple’s XRP approaches significant highs again, while the global economy remains shaky, investors are closely watching the charts and waiting for the next major catalyst. XRP recently broke past the $2.21 resistance level, rose to a high of $2.33, and then stabilized around $2.25. This shows that the market is positive. Rumors of a spot XRP ETF and more interest from institutions are also fueling the rise. However, since XRP is currently worth more than $2, and billions of tokens are circulating, many retail investors wonder if there is a better opportunity to make money elsewhere. Little Pepe (LILPEPE) is a meme-based Layer 2 project that costs only $0.0012 per token. Analysts believe that this meme-native blockchain could be the breakout star of the next bull run, with a potential return on investment of up to 94 times. It could also be a better short- to mid-term selection than XRP for quick gains. You might also like: Shiba Inu exploded in 2021, PEPE in 2023, this frog token under $0.002 could soar in 2025 XRP: The giant awakens, but growth may be limited One of the best things about the coin is that it can be used for cross-border payments. XRP has also been robust amid market corrections, which is giving optimistic momentum. As it found support around $2.29, more than 100 million units were traded. Institutions were quietly purchasing units through large block trades. However, XRP’s price range of $2.14 to $2.33 suggests that even a 3x gain would require a significant influx of new money. For many retail investors, the chances of achieving life-changing profits are smaller than those with low-cap, early-stage tokens. Little Pepe: The underdog who has what it takes to win XRP remains a heavyweight with numerous applications, but Little Pepe is garnering attention for other reasons. LILPEPE is a new Layer 2 blockchain made solely for memes and viral content. Right now, it is in Stage 3 of its presale and costs only $0.0012. The coin has already raised $1,325,000 in less than a week during Stage 2, and it’s gaining speed quickly due to a combination of , unique technology, and the power of the community. Here’s why LILPEPE can be a superior risk-reward option than XRP: One-of-a-kind layer 2 tech made for meme culture Little Pepe is launching its own Layer 2 blockchain, which differs from most memecoins that debut on Ethereum or Binance Smart Chain and rely solely on hype. This makes it possible for: Very low fees Transactions that happen very quickly Sniper-bot protection for fairer trade A meme that comes with it, Launchpad to help future meme tokens grow It’s not just a coin; it’s a whole ecosystem where meme culture is fully on-chain. No taxes, no rug, and complete transparency Little Pepe is different because it has no buy/sell taxes, frozen liquidity, and no team allocation from the presale. These are all signs of a rug-proof design that prioritizes fairness. These tokenomics put the community first: 26.5% presale Allocations 30% reserves for the chain 13.5% staking and rewards 10% for marketing 10% cash flow 10% of CEX/DEX reserves 0% team distribution LILPEPE vs. XRP: Possible return on investment Let’s look at the good things about both: Price of XRP: around $2.15 Price of LILPEPE: $0.0012 To make 10x: XRP would have to reach $22.50, which is not close to the all-time high that was never achieved, even during the 2021 bull run. LILPEPE’s market cap is under $1.2 billion, which is less than most top memecoins like SHIB and PEPE, it only needs to attain $0.012. If LILPEPE reaches $0.11, that’s a 94x return. It hits 100x at $0.12. These targets are not just dreams; they are based on past meme currency cycles and on the fact that they are easy to enter, have a strong community, and offer good infrastructure. How to buy LILPEPE: Step by step Visit the official website. Link a wallet, either Trust Wallet or MetaMask. Pick how to pay (ETH or USDT) Choose Stage 3, which costs $0.0012. Enter the amount and click “Buy.” Verify the transaction in the wallet. Get tokens after the presale is over. New users can buy ETH directly via fiat on-ramps, such as Ramp or MoonPay, and use it to join. Conclusion XRP is gaining strength, breaking through key resistance levels, and drawing the attention of major investors. However, for crypto users who want to make more money with a small amount of capital, LILPEPE presents a great opportunity. It’s a project that combines the popularity of memes with serious technology to create a Layer 2 for the culture. Little Pepe could be the dark horse of this bull cycle, as its presale is going through the roof, and it could make 94 times its investment. Act quickly, as Stage 3 tokens are selling out rapidly. To learn more about Little Pepe, visit the website , Telegram , and Twitter (X) . Read more: From meme to the moon: Why LILPEPE might outperform XRP this bull cycle Disclosure: This content is provided by a third party. crypto.news does not endorse any product mentioned on this page. Users must do their own research before taking any actions related to the company.'
-      },
-      {
-        link: 'https://en.coinotag.com/ethereum-staking-rewards-decline-amid-growing-defi-lending-adoption-and-stablecoin-yields/',
-        hashtag: '#Ethereum #News',
-        date: '2025-06-18',
-        image: 'https://resources.cryptocompare.com/news/77/default.png',
-        title: 'Ethereum Staking Rewards Decline Amid Growing DeFi Lending Adoption and Stablecoin Yields',
-        content: 'DeFi lending platforms are increasingly favored over staking ETH, yet these innovative financial products fundamentally rely on the Ethereum network. Despite declining staking rewards, Ethereum maintains robust network activity and'
-      },
-    ]);
   }, []);
+
+  const getFeedList = async (page = 1, append = false) => {
+    if (feedLoading || !feedHasMore) return;
+
+    setFeedLoading(true);
+    try {
+      const result = await httpClient.get(urls.feedList.replace('%s', page).replace('%s', 3));
+      const newFeeds = result.data.list || [];
+
+      if (append) {
+        setFeedList(prev => [...prev, ...newFeeds]);
+      } else {
+        setFeedList(newFeeds);
+      }
+
+      // 더 이상 데이터가 없으면 hasMore를 false로 설정
+      if (newFeeds.length < 3) {
+        setFeedHasMore(false);
+      }
+    } catch (error) {
+      console.error('피드 로드 실패:', error);
+      message.error(string.feedLoadError);
+    } finally {
+      setFeedLoading(false);
+    }
+  };
+
+  // 인피니트 스크롤을 위한 Intersection Observer 설정
+  const lastFeedElementRef = useCallback(node => {
+    if (feedLoading) return;
+
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && feedHasMore) {
+        const nextPage = feedPage + 1;
+        setFeedPage(nextPage);
+        getFeedList(nextPage, true);
+      }
+    });
+
+    if (node) observerRef.current.observe(node);
+  }, [feedLoading, feedHasMore, feedPage]);
+
+  const fetchSystemSetting = async () => {
+    const response = await httpClient.get(urls.systemSetting);
+    const baseRewardValue = response.data.filter(item => item.type === 'BASE_REWARD')[0].value;
+    setOriginalBaseReward(baseRewardValue);
+    setBaseReward(baseRewardValue);
+
+    setUserGradeCriteria([
+      0,
+      response.data.filter(item => item.type === 'USER_GRADE_1')[0].value,
+      response.data.filter(item => item.type === 'USER_GRADE_2')[0].value,
+      response.data.filter(item => item.type === 'USER_GRADE_3')[0].value,
+      response.data.filter(item => item.type === 'USER_GRADE_4')[0].value,
+      response.data.filter(item => item.type === 'USER_GRADE_5')[0].value,
+      response.data.filter(item => item.type === 'USER_GRADE_6')[0].value,
+      response.data.filter(item => item.type === 'USER_GRADE_6')[0].value+1,
+    ]);
+
+    // response.data에서 MINING_EVENT로 시작하고 GRADE로 끝나는 항목만 필터링
+    let gradeCoin = {
+      0: [],
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+      6: [],
+    };
+
+    // MINING_EVENT로 시작하고 GRADE로 끝나는 type만 추출
+    const miningEventGradeItems = response.data.filter(item => 
+      item.type.startsWith('MINING_EVENT') && item.type.endsWith('GRADE')
+    );
+
+    miningEventGradeItems.forEach(item => {
+      // 코인명 추출 (예: MINING_EVENT_SOL_GRADE → SOL)
+      const coinName = item.type.split('_')[2];
+      gradeCoin[item.value].push(coinName);
+    });
+    gradeCoin[0].push('CENT');
+    gradeCoin[0].push('CAI');
+
+    setGradeCoin(gradeCoin);
+    
+  };
+  const getNoticeList = () => {
+    httpClient.get(urls.boardList.replace('%s', 'NOTICE').replace('%s', 1).replace('%s', 3)).then((result) => {
+      setNoticeList(result.data.list);
+    });
+  }
+
+  const getReferralList = () => {
+    httpClient.get(urls.referalList).then((result) => {
+      setReferralList(result.data);
+    });
+  }
 
   const getMyInfo = () => {
     httpClient.get(urls.myinfo).then((result) => {
@@ -84,117 +206,132 @@ export default function Home() {
     httpClient.post(urls.miningStart).then(res => {
       if (res.data) {
         getMyInfo();
-        message.success('채굴이 시작되었습니다.');
+        message.success(string.miningStartSuccess);
       }
-      else message.error('채굴 시작에 실패했습니다.');
+      else message.error(string.miningStartFailed);
     });
   }
-
+  const handleNoticeClick = (notice) => {
+    router.push(`/menu/notice?idx=${notice.boardIdx}`);
+  }
+  const minerCount = referralList.filter(item => item.miningStartDate && (new Date() - new Date(item.miningStartDate)) < 24 * 60 * 60 * 1000).length;
+  const booster = 20 + minerCount * 3 + user?.lockupPower;
   return (
     <div id="home">
+      <Script
+        src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"
+        strategy="lazyOnload"
+        onLoad={() => console.log('IMA SDK loaded')}
+        onError={() => console.error('IMA SDK failed to load')}
+      />
       {/* 종합정보영역 */}
       <div className="info-box">
         <div className="info-header">
-          <p className="info-label">Wallet Balance</p>
-          <div className="info-balance">
-            {comma(coinList.find(item => item.coinType === 701)?.balance)} <span className="info-unit">CENT</span>
-          </div>
-        </div>
-        <div className="info-detail">
-          <div className="info-detail-box">
-            <p className="info-label">추천인</p>
-            <p className="info-value">2명</p>
-          </div>
-          <div className="info-detail-box">
-            <p className="info-label">락업</p>
-            <p className="info-value">5,000 <span className="info-unit2">CENT</span></p>
-          </div>
-          <div className="info-detail-box">
-            <p className="info-label">CenterAI</p>
-            <p className="info-value">{comma(coinList.find(item => item.coinType === 401)?.balance)} <span className="info-unit2">CAI</span></p>
-          </div>
-        </div>
-      </div>
+          <p className="info-label">{string.walletBalance}</p>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="info-balance">
+              {comma(coinList.find(item => item.coinType === 701)?.balance)} <span className="info-unit">CENT</span>
+            </div>
+            <div className="info-currency">
+              <div>
+                {coinList.find(item => item.coinType === 701)?.price?.toFixed(6)} USD
+              </div>
+              <div>
+                {coinList.find(item => item.coinType === 701)?.priceChange > 0 ? (
+                  <span style={{ color: 'red', paddingRight: '4px', fontSize: '12px' }}>▲</span>
+                ) : coinList.find(item => item.coinType === 701)?.priceChange < 0 ? (
+                  <span style={{ color: 'blue', paddingRight: '4px', fontSize: '12px'  }}>▼</span>
+                ) : null}
+                {coinList.find(item => item.coinType === 701)?.priceChange?.toFixed(2)} %
 
-      {/* 채굴영역 */}
-      <div className="mining-box">
-        <div className="mining-header">
-          <span className="mining-title">일일 채굴</span>
-          {user && user.miningStartDate && new Date() - new Date(user.miningStartDate) < 24 * 60 * 60 * 1000 ? (
-            <span className="mining-time">채굴 중({dayjs().diff(dayjs(user.miningStartDate), 'minute') < 60 ? `${dayjs().diff(dayjs(user.miningStartDate), 'minute')}분 전` : `${dayjs().diff(dayjs(user.miningStartDate), 'hour')}시간 전`})</span>
-          ) : (
-            <Button type="primary" className="mining-button" onClick={handleMiningStart}>채굴하기</Button>
-          )}
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="mining-speed"><b>1.80 CENT/h</b></p>
-        <div className="mining-progress">
-          <div className="mining-bar" style={{ width: `${user && user.miningStartDate && new Date() - new Date(user.miningStartDate) < 24 * 60 * 60 * 1000 ? (new Date() - new Date(user.miningStartDate)) / (24 * 60 * 60 * 1000) * 100 : 0}%` }}></div>
-        </div>
-        <div className="mining-power">
-          <span>팀파워 10%</span>
-          <span>락업파워 20%</span>
-        </div>
-        <RollingList items={bonusUserList} />
-
       </div>
 
       {/* 공지사항 */}
       <div className="notice-box">
         <div className="notice-list-title">
-          <span>공지사항</span>
-          <a href="#" className="notice-more">더보기</a>
+          <span>{string.notice}</span>
+          <Link href="/menu/notice" className="notice-more">{string.more}</Link>
         </div>
         <div className="notice-list">
           {noticeList.length > 0 ? (
             noticeList.map((item, idx) => (
-              <div key={idx} className="notice-item">
+              <div key={idx} className="notice-item" onClick={() => handleNoticeClick(item)}>
                 <div className="notice-item-title">{item.title}</div>
-                <div className="notice-item-date">{item.date}</div>
+                <div className="notice-item-date">{dayjs(item.createDate).format('MM.DD')}</div>
               </div>
             ))
           ) : (
-            <div className="notice-item-empty">공지사항이 없습니다.</div>
+            <div className="notice-item-empty">{string.noNotice}</div>
           )}
         </div>
       </div>
 
       {/* 버튼영역 */}
       <div className="link-buttons">
-        <button className="link-button">FAQ</button>
-        <button className="link-button">백서</button>
-        <button className="link-button">센터코인</button>
+        <Link href="/menu/faq" className="link-button">FAQ</Link>
+        <Link href="https://naver.me/GWeMeeXB" className="link-button" target="_blank">{string.whitepaper}</Link>
+        <Link href="https://centercoin.co.kr/" className="link-button" target="_blank">{string.centerCoin}</Link>
       </div>
 
       {/* 피드영역 */}
       <div className="feed-list">
-        {feedList.map((feed, idx) => (
-          <div key={idx} className="feed-card" onClick={() => {
-            window.open(feed.link, '_blank');
-            // const feedContent = document.querySelectorAll('.feed-content')[idx];
-            // if (feedContent.style.webkitLineClamp) {
-            //   feedContent.style.webkitLineClamp = 'unset';
-            // } else {
-            //   feedContent.style.webkitLineClamp = '4';
-            // }
-          }}>
-            <div className="feed-meta">{feed.hashtag} · {dayjs(feed.date).format('YYYY.MM.DD')}</div>
-            <div className="feed-thumb">
-              <img src={feed.image} alt="피드 이미지" className="object-cover" />
+        {feedList.map((feed, idx) => {
+
+          const isExpanded = expandedFeedId === feed.idx;
+          return (
+            <div
+              key={`${feed.id || idx}-${idx}`}
+              className="feed-card"
+              ref={idx === feedList.length - 1 ? lastFeedElementRef : null}
+              onClick={() => {
+                setExpandedFeedId(isExpanded ? null : feed.idx);
+                // window.open(feed.link, '_blank');
+              }}
+            >
+              <div className="feed-meta">{feed.hashtag} · {dayjs(feed.date).format('YYYY.MM.DD')}</div>
+              <div className="feed-thumb">
+                {feed.fileIdx && (
+                  <img
+                    src={`${urls.imageFile.replace('%s', feed.fileIdx)}`}
+                    onError={(e) => {
+                      e.target.src =
+                        "";
+                    }}
+                    className="object-cover"
+                  />
+                  // <MyImage
+                  //   src={`${urls.imageFile.replace('%s', feed.fileIdx)}`}
+                  // />
+                )}
+                {/* <img src={feed.image} alt="피드 이미지" className="object-cover" /> */}
+              </div>
+              <div className="feed-body">
+                <div className="feed-title">{feed.title}</div>
+                <div className={`feed-content ${isExpanded ? 'expanded' : ''}`}>{feed.content}</div>
+              </div>
             </div>
-            <div className="feed-body">
-              <div className="feed-title">{feed.title}</div>
-              <div className="feed-content">{feed.content}</div>
-            </div>
+          )
+        })}
+
+        {/* 로딩 인디케이터 */}
+        {feedLoading && (
+          <div className="feed-loading">
+            <div className="loading-spinner"></div>
+            <p>피드를 불러오는 중...</p>
           </div>
-        ))}
+        )}
+
+        {/* 더 이상 데이터가 없을 때 */}
+        {!feedHasMore && feedList.length > 0 && (
+          <div className="feed-end">
+            <p>모든 피드를 불러왔습니다.</p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-/* CSS 예시 스타일 구조 (SCSS 또는 전역 CSS 파일에 정의)
-#home .notice-list-title {margin-bottom: 10px; display: flex; justify-content: space-between;}
-#home .notice-more {font-size: 14px; color: #2563eb; text-decoration: none; padding: 3px 8px;}
-#home .notice-list {border-top: 1px solid #999; border-bottom: 1px solid #999; padding: 10px 0;}
-#home .notice-item-empty {text-align: center; color: #666;}
-... 그 외 .info-box, .mining-box, .feed-card 등도 위 규칙에 맞춰 한 줄씩 작성 가능 */

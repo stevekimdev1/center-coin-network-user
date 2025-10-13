@@ -31,6 +31,10 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #top .iconContainer { display: flex; align-items: center; }
 #top .iconContainer .globalImg { width: 20px; height: 20px; margin-left: auto; cursor: pointer; }
 #top .iconContainer .hoverEffect:hover { color: var(--main-color); }
+#top .userStat { flex: 1;padding-top: 5px; padding-left: 5px; }
+#top .userStatItem { display: flex; align-items: center; justify-content: flex-start; }
+#top .userStatItemTitle { font-size: 14px; color: #999; }
+#top .userStatItemValue { font-size: 14px; font-weight: bold; }
 
 #header { margin-top: 24px; margin-bottom: 30px; }
 #header .pathName { font-size: 30px; font-weight: 600; color: var(--main-color); }
@@ -48,15 +52,16 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 .formBox .ant-input-outlined { border-radius: 48px; }
 .formBox:focus-within { border-color: var(--main-color); }
 .formBox:focus-within .icon { color: var(--main-color); }
-.loginBtn { font-family: $font-family; font-size: 20px!important; font-weight: 600; border-radius: 48px; height: 48px; width: 100%; margin-top: 48px; box-shadow: none; outline: 0; background-color: var(--main-color); border: none; cursor: pointer; color: #fff; height: 48px!important; border-radius: 48px!important; }
+.loginBtn { font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 20px!important; font-weight: 600; border-radius: 48px; height: 48px; width: 100%; margin-top: 48px; box-shadow: none; outline: 0; background-color: var(--main-color); border: none; cursor: pointer; color: #fff; height: 48px!important; border-radius: 48px!important; }
 
-.ant-pagination .ant-pagination-prev, .ant-pagination .ant-pagination-next { span { color: #888; } }
+.ant-pagination .ant-pagination-prev span { color: #888; }
+.ant-pagination .ant-pagination-next span { color: #888; }
 .ant-pagination .ant-pagination-item { border: none; }
 .ant-pagination .ant-pagination-item > a { color: #888; }
 .ant-pagination .ant-pagination-item.ant-pagination-item-active > a, .ant-pagination .ant-pagination-item.ant-pagination-item-active:hover > a { color: var(--main-color) !important; }
 
 #login {padding: 20px;}
-#login { .header { height: 56px; display: flex; align-items: center; justify-content: flex-end; } }
+#login .header { height: 56px; display: flex; align-items: center; justify-content: flex-end; }
 #login .header .globalImg { width: 25px; height: 25px; cursor: pointer; margin-right: 8px; }
 #login .header p { margin-right: 16px; cursor: pointer; }
 #login .header .hoverEffect:hover { color: var(--main-color); }
@@ -85,7 +90,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #signup .submitButton:hover { background-color: #40a9ff; border-color: #40a9ff; }
 #signup .link { color: #1890ff; cursor: pointer; margin: 0 5px; }
 #signup .modalContent { width: 100%; height: 400px; border: none; }
-#signup .signupBtn { font-family: $font-family; font-size: 20px!important; font-weight: 600; border-radius: 48px; height: 48px; width: 100%; margin-top: 48px; box-shadow: none; outline: 0; background-color: var(--main-color); border: none; cursor: pointer; color: #fff; height: 48px!important; border-radius: 48px!important; }
+#signup .signupBtn { font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 20px!important; font-weight: 600; border-radius: 48px; height: 48px; width: 100%; margin-top: 48px; box-shadow: none; outline: 0; background-color: var(--main-color); border: none; cursor: pointer; color: #fff; height: 48px!important; border-radius: 48px!important; }
 
 #mailVerify { padding: 20px; }
 #mailVerify .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100vh - 300px); text-align: center; }
@@ -132,7 +137,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 
 
 #referral {padding: 20px;}
-#referral { .header { height: 56px; display: flex; align-items: center; justify-content: flex-end; } }
+#referral .header { height: 56px; display: flex; align-items: center; justify-content: flex-end; }
 #referral .header .globalImg { width: 25px; height: 25px; cursor: pointer; margin-right: 8px; }
 #referral .header p { margin-right: 16px; cursor: pointer; }
 #referral .header .hoverEffect:hover { color: var(--main-color); }
@@ -141,7 +146,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #referral .title { font-size: 24px;font-weight: 500;color:#000;margin: 20px 0;}
 #referral .desc {color:#000;margin: 20px 0;}
 #referral .btn-container {display: flex;justify-content: space-between;width: 100%;}
-#referral .prev-btn { font-family: $font-family; font-size: 20px; font-weight: 600; border-radius: 48px; height: 48px; width: 100%; margin-top: 48px; box-shadow: none; outline: 0; background-color: #fff; border: 1px solid #999; cursor: pointer; color: #000; }
+#referral .prev-btn { font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 20px; font-weight: 600; border-radius: 48px; height: 48px; width: 100%; margin-top: 48px; box-shadow: none; outline: 0; background-color: #fff; border: 1px solid #999; cursor: pointer; color: #000; }
 #referral .error-message {width: 100%;color: red; height: 30px;}
 
 .loginOptionBox input[type="checkbox"] { cursor: pointer; }
@@ -150,7 +155,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 .ant-popover-content { margin-right: 16px; }
 .ant-popover-content .pophover { font-size: 18px; }
 .ant-popover-content .pophover > div { margin: 4px 0; }
-.ant-popover-content .pophover .lan { font-family: $font-family; cursor: pointer; font-weight: 300; margin: 5px 15px; text-align: center; color: #888; }
+.ant-popover-content .pophover .lan { font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; cursor: pointer; font-weight: 300; margin: 5px 15px; text-align: center; color: #888; }
 .ant-popover-content .pophover .lan.active { color: var(--main-color); font-weight: bold; }
 
 #home { padding: 0 10px 20px 10px; }
@@ -160,6 +165,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #home .notice-more { font-size: 14px; color: #2563eb; text-decoration: none; padding: 3px 8px; }
 #home .notice-list { border-top: 1px solid #999; border-bottom: 1px solid #999; padding: 10px 0; }
 #home .notice-item {display: flex;justify-content: space-between;padding: 0 5px;}
+#home .notice-item-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; margin-right: 10px; }
 #home .notice-item-date {opacity: 0.5;}
 
 #home .notice-item-empty { text-align: center; color: #666; }
@@ -167,6 +173,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #home .info-header { padding: 0 14px;}
 #home .info-item { display: flex; }
 #home .info-balance { font-size: 30px; font-weight: 500; letter-spacing: -1; }
+#home .info-currency { font-size: 14px; letter-spacing: -1; text-align: right; }
 #home .info-unit { font-size: 18px; }
 #home .info-unit2 { font-size: 11px; }
 #home .info-detail { display: flex; gap:10px; margin-top: 10px;}
@@ -188,8 +195,14 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #home .step-track { display: flex; flex-direction: column; }
 #home .step-item { height: 30px; line-height: 30px; font-size: 14px; white-space: nowrap; }
 
+/* 피드 인피니트 스크롤 스타일 */
+#home .feed-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; color: #666; }
+#home .loading-spinner { width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #0044ff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+#home .feed-end { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
 #home .link-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
-#home .link-button { height: 64px; border: 1px solid #0044ff; color: #0044ff; font-weight: bold; border-radius: 12px; background: white; }
+#home .link-button { height: 64px; border: 1px solid #0044ff; color: #0044ff; font-weight: bold; border-radius: 12px; background: white; text-align: center; line-height: 60px; }
 #home .feed-list { display: flex; flex-direction: column; gap: 24px; margin-top: 24px; }
 #home .feed-card { border: 1px solid #ddd; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 #home .feed-meta { font-size: 12px; color: #999; padding: 12px 16px 0; }
@@ -198,6 +211,22 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #home .feed-body { padding: 16px; }
 #home .feed-title { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: #333; }
 #home .feed-content { font-size: 14px; color: #555; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
+#home .feed-content.expanded {  -webkit-line-clamp: unset;  display: block;  overflow: visible;}
+
+#home .grade-progress-container { margin: 15px 0; padding: 0 10px; }
+#home .grade-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+#home .grade-label { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; }
+#home .grade-text { font-size: 12px; font-weight: 600; color: #ccc; margin-bottom: 2px; }
+#home .grade-text.current-grade { color: #ff6b35; font-weight: 700; }
+#home .grade-amount { font-size: 10px; color: #ccc; }
+#home .grade-progress-bar { position: relative; height: 20px; }
+#home .progress-track { position: relative; width: 100%; height: 8px; background-color: #f0f0f0; border-radius: 4px; overflow: visible; }
+#home .grade-marker { position: absolute; top: -6px; transform: translateX(-50%); }
+#home .marker-line { width: 2px; height: 20px; background-color: #ddd; border-radius: 1px; }
+#home .progress-fill { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, #f78a62, #ff6b35); border-radius: 4px; transition: width 0.3s ease; }
+#home .current-position { position: absolute; top: -15px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+#home .position-indicator { width: 12px; height: 12px; background-color: #ff6b6b; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+#home .position-label { font-size: 10px; color: #ff6b6b; font-weight: 600; margin-top: 2px; white-space: nowrap; }
 
 #wallet { padding: 0 10px 20px 10px; }
 #wallet .wallet-balance { margin-bottom: 20px;padding: 0 10px; }
@@ -205,16 +234,28 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #wallet .wallet-balance-value { font-size: 28px; font-weight: bold; }
 #wallet .wallet-unit { font-size: 14px; margin-left: 4px; color: #666; }
 #wallet .wallet-coin-title { font-size: 16px; font-weight: 500; margin-bottom: 10px; }
-#wallet .wallet-coin-card { border: 1px solid #ddd; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
+#wallet .wallet-coin-card { border: 1px solid #ddd; border-radius: 12px; padding: 12px; margin-bottom: 16px;position: relative; }
+#wallet .wallet-coin-card-event {top: 0;left: 0;right:0;bottom:0;position: absolute;background-color: #000;opacity: 0.9;display: flex;flex-direction: row;align-items: center;}
+#wallet .wallet-coin-card-event-title { padding: 20px;}
+#wallet .wallet-coin-card-event-amount { color: #fff;font-size: 14px; }
+#wallet .wallet-coin-card-event-amount .alert { color: red; }
+#wallet .wallet-coin-card-event-amount-buttons {display: flex;}
+#wallet .wallet-coin-card-event-amount-button {padding: 3px 10px;margin-right: 10px;margin-top:10px;background-color: #fff;color:#000;border-radius: 5px;cursor: pointer;}
+#wallet .wallet-coin-card-event-amount-button.blue-button {background-color: #0033cc;color: #fff;}
+
 #wallet .wallet-coin-info { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 #wallet .wallet-coin-img { width: 40px; height: 40px; border-radius: 50%; }
 #wallet .wallet-coin-name { flex: 1; font-size: 18px; font-weight: 500; color: #0044ff; }
 #wallet .wallet-coin-balance { text-align: right; font-size: 14px; color: #000; }
+#wallet .wallet-coin-lock-balance {color: #333;}
 #wallet .wallet-coin-krw { font-size: 12px; color: #888; }
 #wallet .wallet-coin-actions { display: flex; justify-content: space-between; gap: 8px; }
 #wallet .wallet-action { flex: 1; background: #0044ff; color: white; border: none; border-radius: 20px; padding: 6px 0; font-size: 14px; }
 #wallet .wallet-action-outline { flex: 1; border: 1px solid #0044ff; color: #0044ff; background: none; border-radius: 20px; padding: 6px 0; font-size: 14px; }
 #wallet .wallet-action-disabled { flex: 1;  }
+
+#wallet .wallet-coin-list-tab {display: flex;gap: 20px;}
+#wallet .wallet-coin-title.active {color: #0044ff;border-bottom: 2px solid #0044ff;}
 
 #sendmodal .send-guide { font-size: 14px; color: #666; margin-bottom: 16px; }
 #sendmodal .send-form { display: flex; flex-direction: column; gap: 16px; }
@@ -233,13 +274,14 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #translog-modal .translog-date { text-align: right; font-size: 12px; color: #999; }
 
 
-#miningpage { padding: 20px; font-family: 'Pretendard', sans-serif; }
+#miningpage { padding: 20px;  }
 #miningpage .mining-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 #miningpage .status-right { display: flex; align-items: center; gap: 10px; }
 #miningpage .end-time { font-size: 14px; color: #444; }
 #miningpage .history-icon { font-size: 18px; cursor: pointer; color: #888; }
 
-#miningpage .mining-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+#miningpage .mining-title { font-size: 20px; font-weight: bold; margin-bottom: 7px; }
+#miningpage .mining-desc { font-size: 14px; margin-bottom: 0px; }
 #miningpage .primary { color: #0044ff; font-weight: bold; }
 #miningpage .mining-formula { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
 #miningpage .factor-box { flex: 1; padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 500; }
@@ -265,17 +307,23 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #miningpage .bonus-icon { text-align: center; width: 64px; }
 #miningpage .coin-name { font-size: 12px; margin-top: 4px; color: #333; }
 
-#mininghistory { padding: 20px; font-family: 'Pretendard', sans-serif; }
+#mininghistory { padding: 20px;  }
 #mininghistory .title { font-size: 18px; font-weight: bold; margin-bottom: 16px; }
 #mininghistory .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
 #mininghistory .history-date { color: #666; font-size: 14px; }
 #mininghistory .history-amount { font-weight: bold; font-size: 15px; color: #0044ff; }
 
-#lockup-setting { padding: 20px; font-family: 'Pretendard', sans-serif; }
-#lockup-setting .header h2 { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 20px; }
-#lockup-setting .section { margin-bottom: 24px; }
+#lockup-setting { padding: 0px;  }
+#lockup-setting .header h2 { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+#lockup-setting .section { margin-bottom: 30px; }
+#lockup-setting .agreement {font-size: 14px;font-weight: bold;}
+#lockup-setting .agreement-text {font-size: 14px;margin: 5px 0 15px 0;}
+#lockup-setting .highlight { color: #0044ff; font-weight: 600; }
+#lockup-setting .highlight2 { color: #0044ff; font-size: 18px; }
+
+#lockup-setting .lockup-box { padding: 5px 0; }
+#lockup-setting .sub-box { display: flex;justify-content: space-between;align-items: center; }
 #lockup-setting .info-box { background: #f8f8f8; padding: 16px; border-radius: 12px; }
-#lockup-setting .highlight { color: purple; font-weight: 600; }
 #lockup-setting .sub { margin-top: 8px; color: #888; font-size: 14px; }
 #lockup-setting .summary { text-align: center; }
 #lockup-setting .increase { font-size: 24px; color: #5b21b6; font-weight: bold; }
@@ -284,7 +332,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #lockup-setting .status { font-size: 14px; font-weight: 500; margin-bottom: 16px; }
 #lockup-setting .confirm-button { background-color: #0044ff; border: none; color: #fff;height: 50px;border-radius: 50px;display: flex;align-items: center;justify-content: center;font-size: 20px;}
 
-#referral-page { padding: 20px; font-family: 'Pretendard', sans-serif; }
+#referral-page { padding: 20px;  }
 #referral-page .referral-header { text-align: center; margin-bottom: 24px; }
 #referral-page .summary-circle { width: 80px; height: 80px; border-radius: 50%; background: #eee; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 10px auto; }
 #referral-page .mining-count { font-size: 24px; font-weight: bold; }
@@ -299,12 +347,15 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #referral-page .empty { text-align: center; padding: 40px 0; color: #888; }
 #referral-page .bottom-buttons { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
 #referral-page .bottom-buttons button { height: 50px;border-radius: 50px;}
+#referral-page .referral-url-container {  display: flex;  align-items: center;  word-break: break-all;}
+#referral-page .copy-icon:hover {color: #40a9ff !important;}
 
 #mining-reward-popup { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; color: #fff; text-align: center; }
 #mining-reward-popup .gift-box { cursor: pointer; position: relative; }
 #mining-reward-popup .tap-text { margin-top: 12px; font-size: 16px; color: #ddd; }
 #mining-reward-popup .reward-reveal { display: flex; flex-direction: column; align-items: center; }
 #mining-reward-popup .reward-text { font-size: 24px; font-weight: bold; margin-top: 12px; color: #ffd700; }
+#mining-reward-popup .reward-text2 { font-size: 18px; margin-top: 12px; color: #fff; padding: 0 50px;}
 #mining-reward-popup .close-btn { margin-top: 20px; padding: 8px 20px; background: #fff; color: #333; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
 
 #organization {display: flex;flex-direction: column;flex: 1;}
@@ -325,7 +376,7 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #history .list-i2e {background-color: #FF6B6B;color: #fff;padding: 3px 15px; border-radius: 5px;font-size: 14px;letter-spacing: -1px;}
 #history .list-send {background-color: #4ECDC4;color: #fff;padding: 3px 15px; border-radius: 5px;font-size: 14px;letter-spacing: -1px;}
 #history .list-receive {background-color: #ff9f1c;color: #fff;padding: 3px 15px; border-radius: 5px;font-size: 14px;letter-spacing: -1px;}
-#history .list- {background-color: #685ee8;color: #fff;padding: 3px 15px; border-radius: 5px;font-size: 14px;letter-spacing: -1px;}
+#history .list-mining {background-color: #685ee8;color: #fff;padding: 3px 15px; border-radius: 5px;font-size: 14px;letter-spacing: -1px;}
 #history .list-other {background-color: #4ECDC4;color: #fff;padding: 3px 15px; border-radius: 5px;font-size: 14px;letter-spacing: -1px;}
 
 #history .list-amount {font-size: 22px;letter-spacing: -1px;color: #000;font-weight: 400;text-align: end;}
@@ -334,8 +385,8 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #history .list-amount-unit {font-size: 14px;color: #999;}
 #history .list-date {font-size: 14px;letter-spacing: -1px;color: #999;}
 
-#myinfo { padding: 20px; font-family: 'Pretendard', sans-serif; }
-#myinfo .myinfo-section { max-width: 600px; margin: 0 auto; }
+#myinfo { padding: 20px;  }
+#myinfo .myinfo-section { margin: 0 auto; }
 #myinfo .myinfo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 #myinfo .myinfo-title { font-size: 20px; font-weight: bold; }
 #myinfo .myinfo-row { margin-bottom: 16px; }
@@ -345,6 +396,8 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #myinfo .myinfo-btn { padding: 6px 12px; background-color: #0044ff; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; margin-top: 8px; }
 #myinfo .myinfo-btn.cancel { background-color: #ccc; color: #000; }
 #myinfo .myinfo-btn.edit { margin-left: 12px; padding: 4px 10px; font-size: 13px; background-color: #eee; color: #333; }
+#myinfo .withdrawModalContent {  padding: 1rem 0;}
+#myinfo .withdrawWarning { color: #ff4d4f; text-align: center; margin-bottom: 2rem; font-size: 1rem; line-height: 1.5; }
 
 .ant-switch.ant-switch-checked {background-color: #6d90f0;}
 
@@ -371,3 +424,14 @@ body { font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe U
 #notice .notice-loading {text-align: center; padding: 32px;}
 #notice .notice-error {text-align: center; padding: 32px; color: red;}
 #notice .notice-loading-more {text-align: center; padding: 16px; font-size: 14px; color: #6b7280;}
+
+
+.gauge-wrapper { position: relative; margin: 10px auto; }
+.gauge-bg { width: calc(100% + 40px); height: auto; display: block;margin-left: -20px;margin-right: -20px; }
+.gauge-needle { position: absolute; width: 100px; height: auto; left: 50%; bottom: 30%; transform: translateX(-50%) rotate(0deg); transform-origin: 50% 90%; /* 바늘 회전 중심 */ animation: swing-needle 2s infinite ease-in-out; }
+@keyframes swing-needle { 0% { transform: translateX(-50%) rotate(-25deg); } 50% { transform: translateX(-50%) rotate(25deg); } 100% { transform: translateX(-50%) rotate(-25deg); } }
+
+#privacy { background-color: #f2f4f6; min-height: 100vh; padding: 24px 16px; }
+#privacy .agreement-content-title { display: flex; align-items: center; justify-content: space-between; }
+#privacy .agreement-content-title-text { font-size: 18px; font-weight: bold; color: #000000; margin-bottom: 16px; text-align: left; }
+#privacy .agreement-content-body { font-size: 14px; color: #4a4a4a; line-height: 1.6; margin-bottom: 12px; white-space: pre-line; }

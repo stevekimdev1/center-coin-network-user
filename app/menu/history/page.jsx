@@ -8,10 +8,11 @@ import { comma } from "@/src/lib/util/numberUtil";
 
 import httpClient from "@/src/lib/util/httpclient";
 import { urls } from "@/src/const";
-import string from "@/src/language/StringKo";
 import { useCoin } from "@/src/context/CoinContext";
+import { useString } from "@/src/context/StringContext";
 
 const History = () => {
+  const { string } = useString();
   const [list, setList] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const loader = useRef(null);
@@ -79,15 +80,19 @@ const History = () => {
             switch (row.type) {
               case 'E2I':
                 typeClass = 'list-e2i';
-                typeText = '외부입금';
+                typeText = string.externalDeposit;
                 break;
               case 'I2E':
                 typeClass = 'list-i2e';
-                typeText = '외부송금';
+                typeText = string.externalTransfer;
                 break;
               case 'SEND':
                 typeClass = row.from == myAddress ? 'list-send' : 'list-receive';
-                typeText = row.from == myAddress ? '송금' : '입금';
+                typeText = row.from == myAddress ? string.send : string.receive;
+                break;
+              case 'MINING':
+                typeClass = 'list-mining';
+                typeText = string.mining;
                 break;
               default:
                 typeClass = 'list-other';

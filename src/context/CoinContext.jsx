@@ -32,6 +32,7 @@ export function CoinProvider({ children }) {
           // coin.price = coinData.price;
           coin.balance = coinData.balanceDouble;
           coin.address = coinData.address;
+          coin.lockBalance = coinData.lockBalanceDouble;
         }
         const coinTickerData = coinTicker.find(item => item.symbol === coin.symbol);
         if (coinTickerData) {

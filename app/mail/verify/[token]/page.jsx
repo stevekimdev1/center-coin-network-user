@@ -31,7 +31,7 @@ export default function MailVerify({ params }) {
   return (
     <div id="mailVerify">
       <div className="container">
-        <h1 className="title">MGT</h1>
+        <h1 className="title">Center Network</h1>
         {status === 'verifying' && (
           <p className="loading">인증 진행 중...</p>
         )}

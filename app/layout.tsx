@@ -5,10 +5,13 @@ import "@/src/css/page.css";
 import ClientLayout from "@/app/clientLayout";
 import { UserProvider } from "@/src/context/UserContext";
 import { CoinProvider } from "@/src/context/CoinContext";
+import { StringProvider } from "@/src/context/StringContext";
 import React from "react";
 import { Nunito_Sans } from 'next/font/google';
 import Navbar from '@/src/components/Navbar';
 import QueryProvider from '../src/components/queryProvider';
+import Head from "next/head";
+import Script from "next/script";
 const nunitoSans = Nunito_Sans({ subsets: ['latin'] });
 
 const geistSans = Geist({
@@ -57,25 +60,26 @@ export const viewport: Viewport = {
   userScalable: false,
   viewportFit: 'cover'  // 노치 디자인 대응
 }
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html>
       <body className={nunitoSans.className}>
         <UserProvider>
           <CoinProvider>
-            <QueryProvider>
+            <StringProvider>
+              <QueryProvider>
 
-              <ClientLayout>
-                <div className="root-container">
-                  {children}
-                </div>
-              </ClientLayout>
-            </QueryProvider>
+                <ClientLayout>
+                  <div className="root-container">
+                    {children}
+                  </div>
+                </ClientLayout>
+              </QueryProvider>
+            </StringProvider>
           </CoinProvider>
         </UserProvider>
       </body>

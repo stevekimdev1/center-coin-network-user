@@ -2,10 +2,11 @@
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { Input, Button, Select, Form, message, App, Modal, Checkbox } from 'antd';
-import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, GiftOutlined, CheckCircleFilled, LeftOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, GiftOutlined, CheckCircleFilled, LeftOutlined, CalendarOutlined } from '@ant-design/icons';
 import httpClient from "@/src/lib/util/httpclient";
 import { urls } from "@/src/const";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useString } from '@/src/context/StringContext';
 
 const { Option } = Select;
 
@@ -13,6 +14,7 @@ function SignupForm() {
     const { message, modal } = App.useApp();
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { string } = useString();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [timeLeft, setTimeLeft] = useState(300); // 5분
@@ -43,29 +45,51 @@ function SignupForm() {
         }
     }, [searchParams, form]);
 
+    // 생년월일 형식 검증 함수
+    const validateBirthday = (value) => {
+        if (!value) return true; // 필수가 아니므로 빈 값은 허용
+        
+        // yyyymmdd 형식 검증
+        const birthdayRegex = /^\d{8}$/;
+        if (!birthdayRegex.test(value)) {
+            return false;
+        }
+        
+        const year = parseInt(value.substring(0, 4));
+        const month = parseInt(value.substring(4, 6));
+        const day = parseInt(value.substring(6, 8));
+        
+        // 유효한 날짜인지 검증
+        const date = new Date(year, month - 1, day);
+        return date.getFullYear() === year && 
+               date.getMonth() === month - 1 && 
+               date.getDate() === day &&
+               year >= 1900 && year <= new Date().getFullYear();
+    };
+
     const handleIdCheck = async () => {
         try {
             const userId = form.getFieldValue('userId');
             if (!userId) {
-                message.error('이메일을 입력해주세요.');
+                message.error(string.emailRequired);
                 return;
             }
             // 이메일 형식 검증
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(userId)) {
-                message.error('올바른 이메일 형식이 아닙니다.');
+                message.error(string.emailFormat);
                 return;
             }
             const response = await httpClient.get(urls.checkId + "/" + userId);
             if (!response.data) {
-                message.success('사용 가능한 이메일입니다.');
+                message.success(string.duplicateCheckSuccess);
                 setIdChecked(true);
             } else {
-                message.error('이미 사용중인 이메일입니다.');
+                message.error(string.duplicateCheckFailed);
                 setIdChecked(false);
             }
         } catch (error) {
-            message.error('이메일 중복 확인 중 오류가 발생했습니다.');
+            message.error(string.duplicateCheckError);
             setIdChecked(false);
         }
     };
@@ -73,14 +97,15 @@ function SignupForm() {
     const handleSubmit = async (values) => {
 
         if (!idChecked) {
-            message.error('이메일 중복확인을 해주세요.');
+            message.error(string.duplicateCheckRequired);
             return;
         }
 
         try {
             setLoading(true);
             const signupData = {
-                ...values
+                ...values,
+                birthday: values.birthday || null // 생년월일이 없으면 null로 설정
             };
 
             const response = await httpClient.post(urls.signup, signupData);
@@ -88,32 +113,32 @@ function SignupForm() {
             switch (response.data) {
                 case 'SUCCESS':
                     modal.success({
-                        title: '회원가입 성공',
-                        content: '회원가입이 완료되었습니다. 로그인하여 이용해 주세요.',
+                        title: string.signupSuccess,
+                        content: string.signupSuccessMessage,
                         onOk: () => router.push('/login')
                     });
                     break;
                 case 'INVALID_EMAIL_FORMAT':
-                    message.error('올바르지 않은 이메일 형식입니다.');
+                    message.error(string.invalidEmailFormat);
                     break;
                 case 'DUPLICATE_USER_ID':
-                    message.error('이미 사용중인 이메일입니다.');
+                    message.error(string.duplicateUserId);
                     setIdChecked(false);
                     break;
                 case 'INVALID_PASSWORD_FORMAT':
-                    message.error('비밀번호는 8~15자의 영문, 숫자, 특수문자 조합이어야 합니다.');
+                    message.error(string.invalidPasswordFormat);
                     break;
                 case 'NO_REFERER':
-                    message.error('존재하지 않는 추천코드입니다.');
+                    message.error(string.noReferer);
                     break;
                 case 'FAIL':
-                    message.error('회원가입 처리 중 오류가 발생했습니다.');
+                    message.error(string.signupFail);
                     break;
                 default:
-                    message.error('알 수 없는 오류가 발생했습니다.');
+                    message.error(string.unknownError);
             }
         } catch (error) {
-            message.error('회원가입 중 오류가 발생했습니다.');
+            message.error(string.signupError);
         } finally {
             setLoading(false);
         }
@@ -145,23 +170,23 @@ function SignupForm() {
                             <Form.Item
                                 name="userId"
                                 rules={[
-                                    { required: true, message: '이메일을 입력해주세요' },
-                                    { type: 'email', message: '올바른 이메일 형식이 아닙니다' }
+                                    { required: true, message: string.emailRequired },
+                                    { type: 'email', message: string.emailFormat }
                                 ]}
                             >
                                 <Input
                                     prefix={<MailOutlined />}
-                                    placeholder="이메일"
+                                    placeholder={string.idEmail}
                                     onChange={handleUserIdChange}
                                     suffix={
                                         idChecked ? (
                                             <span className="idCheckedStatus">
                                                 <CheckCircleFilled style={{ color: '#52c41a' }} />
-                                                <span className="idCheckedText">사용 가능</span>
+                                                <span className="idCheckedText">{string.available}</span>
                                             </span>
                                         ) : (
                                             <Button onClick={handleIdCheck} size="middle" className="checkButton">
-                                                중복확인
+                                                {string.duplicateCheck}
                                             </Button>
                                         )
                                     }
@@ -172,11 +197,11 @@ function SignupForm() {
                         <div className="formBox">
                             <Form.Item
                                 name="name"
-                                rules={[{ required: true, message: '이름을 입력해주세요' }]}
+                                rules={[{ required: true, message: string.nameRequired }]}
                             >
                                 <Input
                                     prefix={<UserOutlined />}
-                                    placeholder="이름"
+                                    placeholder={string.name}
                                 />
                             </Form.Item>
                         </div>
@@ -185,16 +210,16 @@ function SignupForm() {
                             <Form.Item
                                 name="password"
                                 rules={[
-                                    { required: true, message: '비밀번호를 입력해주세요' },
+                                    { required: true, message: string.passwordRequired },
                                     {
                                         pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^])[A-Za-z\d@$!%*#?&^]{8,15}$/,
-                                        message: '8~15자의 영문, 숫자, 특수문자를 조합해주세요'
+                                        message: string.passwordFormat
                                     }
                                 ]}
                             >
                                 <Input.Password
                                     prefix={<LockOutlined />}
-                                    placeholder="비밀번호 (8~15자의 영문, 숫자, 특수문자 조합)"
+                                    placeholder={string.passwordFormat}
                                 />
                             </Form.Item>
                         </div>
@@ -204,76 +229,78 @@ function SignupForm() {
                                 name="passwordConfirm"
                                 dependencies={['password']}
                                 rules={[
-                                    { required: true, message: '비밀번호 확인을 입력해주세요' },
+                                    { required: true, message: string.passwordConfirmRequired },
                                     ({ getFieldValue }) => ({
                                         validator(_, value) {
                                             if (!value || getFieldValue('password') === value) {
                                                 return Promise.resolve();
                                             }
-                                            return Promise.reject(new Error('비밀번호가 일치하지 않습니다'));
+                                            return Promise.reject(new Error(string.passwordMismatch));
                                         },
                                     }),
                                 ]}
                             >
                                 <Input.Password
                                     prefix={<LockOutlined />}
-                                    placeholder="비밀번호 확인"
-                                />
-                            </Form.Item>
-                        </div>
-
-                        <div className="formBox">
-                            <Form.Item
-                                name="phone"
-                                rules={[
-                                    { required: true, message: '연락처를 입력해주세요' },
-                                    {
-                                        pattern: /^[0-9]+$/,
-                                        message: '숫자만 입력해주세요'
-                                    }
-                                ]}
-                            >
-                                <Input
-                                    prefix={<PhoneOutlined />}
-                                    placeholder="연락처 (숫자만 입력)"
-                                    maxLength={11}
+                                    placeholder={string.passwordConfirm}
                                 />
                             </Form.Item>
                         </div>
 
                         {/* <div className="formBox">
                             <Form.Item
-                                name="referrer"
-                                rules={[{ required: true, message: '추천코드를 입력해주세요' }]}
+                                name="phone"
+                                rules={[
+                                    { required: true, message: string.phoneRequired },
+                                    {
+                                        pattern: /^[0-9]+$/,
+                                        message: string.phoneFormat
+                                    }
+                                ]}
                             >
                                 <Input
-                                    prefix={<GiftOutlined />}
-                                    placeholder="추천코드"
+                                    prefix={<PhoneOutlined />}
+                                    placeholder={string.phone}
+                                    maxLength={11}
                                 />
                             </Form.Item>
                         </div> */}
 
-                        {/* <div className={styles.agreement}>
-                        <Form.Item
-                            name="agreement"
-                            valuePropName="checked"
-                            rules={[{ required: true, message: '이용약관 및 개인정보 보호정책에 동의해주세요.' }]}
-                        >
-                            <Checkbox>
-                                <span className={styles.link} onClick={(e) => {
-                                    e.preventDefault();
-                                    setTermsSrc(`/agreement/terms.html?reload=${new Date().getTime()}`);
-                                    setIsTermsModalVisible(true);
+                        <div className="formBox">
+                            <Form.Item
+                                name="birthday"
+                                rules={[
+                                    {
+                                        validator: (_, value) => {
+                                            if (!value) {
+                                                return Promise.resolve(); // 필수가 아니므로 빈 값 허용
+                                            }
+                                            if (!validateBirthday(value)) {
+                                                return Promise.reject(new Error(string.birthdayFormat));
+                                            }
+                                            return Promise.resolve();
+                                        }
+                                    }
+                                ]}
+                            >
+                                <Input
+                                    prefix={<CalendarOutlined />}
+                                    placeholder={string.birthday}
+                                    maxLength={8}
+                                />
+                            </Form.Item>
+                        </div>
 
-                                }}>이용약관</span> 및
-                                <span className={styles.link} onClick={(e) => {
-                                    e.preventDefault();
-                                    setPrivacySrc(`/agreement/privacy.html?reload=${new Date().getTime()}`);
-                                    setIsPrivacyModalVisible(true);
-                                }}>개인정보 보호정책</span>에 모두 동의합니다
-                            </Checkbox>
-                        </Form.Item>
-                    </div> */}
+                        <div className="formBox">
+                            <Form.Item
+                                name="referrer"
+                            >
+                                <Input
+                                    prefix={<GiftOutlined />}
+                                    placeholder={string.referrer}
+                                />
+                            </Form.Item>
+                        </div>
 
                         <Button
                             type="primary"
@@ -282,7 +309,7 @@ function SignupForm() {
                             loading={loading}
                             block
                         >
-                            가입하기
+                            {string.signupBtn}
                         </Button>
                     </Form>
                 </div>
