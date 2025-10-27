@@ -65,34 +65,60 @@ const Wallet = () => {
             <div className={`wallet-coin-title ${selectedTab == 1 ? 'active' : ''}`} onClick={() => { setSelectedTab(1); }}>{string.goodsEvent}</div>
           </div>
           {selectedTab == 0 && coinList.map((coin, index) => {
-            if (coin.coinType == 701 || coin.coinType == 401) {
-              return (
-                <div key={index} className="wallet-coin-card">
-                  <div className="wallet-coin-info">
-                    <img src={coin.image} alt={coin.name} className="wallet-coin-img" />
-                    <div className="wallet-coin-name">{coin.name}</div>
-                    <div className="wallet-coin-balance">
-                      {comma(coin.balance, 4)} {coin.name}
-                      {coin.lockBalance > 0 && (
-                        <div className="wallet-coin-lock-balance">
-                          (
-                          <span style={{ marginRight: 4 }}>
-                            <LockOutlined style={{ verticalAlign: 'middle' }} />
-                          </span>
-                          {comma(coin.lockBalance, 4)})
-                        </div>
-                      )}
-                      <div className="wallet-coin-krw">≈ {comma((coin?.balance || 0) * (coin?.price || 0), 0)} USD</div>
-                    </div>
-                  </div>
-                  <div className="wallet-coin-actions">
-                    <button className="wallet-action-outline" onClick={() => { setSelectedCoinType(coin.coinType); setTranslogModalVisible(true); }}>{string.transactionHistory}</button>
-                    <button className="wallet-action" onClick={() => { setSelectedCoinType(coin.coinType); setSendModalVisible(true); }}>{string.send}</button>
-                    {coin.coinType == 701 || coin.coinType == 401 ? <button className="wallet-action" onClick={() => { setSelectedAddress(coin.address); setSelectedCoin(coin); }}>{string.receive}</button> : <div className="wallet-action-disabled"></div>}
+            const event = miningEventList.find(e => e.coinType == coin.coinType);
+            return (
+              <div key={index} className="wallet-coin-card">
+                <div className="wallet-coin-info">
+                  <img src={coin.image} alt={coin.name} className="wallet-coin-img" />
+                  <div className="wallet-coin-name">{coin.name}</div>
+                  <div className="wallet-coin-balance">
+                    {comma(coin.balance, 4)} {coin.name}
+                    {coin.lockBalance > 0 && (
+                      <div className="wallet-coin-lock-balance">
+                        (
+                        <span style={{ marginRight: 4 }}>
+                          <LockOutlined style={{ verticalAlign: 'middle' }} />
+                        </span>
+                        {comma(coin.lockBalance, 4)})
+                      </div>
+                    )}
+                    <div className="wallet-coin-krw">≈ {comma((coin?.balance || 0) * (coin?.price || 0), 0)} USD</div>
                   </div>
                 </div>
-              );
-            }
+                <div className="wallet-coin-actions">
+                  <button className="wallet-action-outline" onClick={() => { setSelectedCoinType(coin.coinType); setTranslogModalVisible(true); }}>{string.transactionHistory}</button>
+                  <button className="wallet-action" onClick={() => { setSelectedCoinType(coin.coinType); setSendModalVisible(true); }}>{string.send}</button>
+                  {coin.coinType == 701 || coin.coinType == 401 ? <button className="wallet-action" onClick={() => { setSelectedAddress(coin.address); setSelectedCoin(coin); }}>{string.receive}</button> : <div className="wallet-action-disabled"></div>}
+                </div>
+                {event && (
+                  <div className="wallet-coin-card-event">
+                      <div className="wallet-coin-card-event-title">
+
+                      <img src={coin.image} alt={coin.name} width={50} height={50}/>
+
+                        {/* <motion.div
+                          initial={{ scale: 0.3, opacity: 0 }}
+                          animate={{ scale: [1.0, 1.6, 1.0, 1.2, 1.0], opacity: 1 }}
+                          exit={{ scale: 0.8, opacity: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className="gift-box"
+                        >
+                          <img src="/img/giftbox.png" alt="Gift Box" width={100} height={100} />
+                        </motion.div> */}
+                      </div>
+                      <div className="wallet-coin-card-event-amount">
+                      <p>{event.isEvent ? string.eventWon : string.miningComplete} {comma(event.amountDouble, 4)} {coinList.find(coin => coin.coinType == event.coinType)?.symbol}</p>
+                      {!event.isPaid && (<p className="alert">{string.insufficientBalance}</p>)}
+                      <div className="wallet-coin-card-event-amount-buttons">
+                      {!event.isPaid && (<div className="wallet-coin-card-event-amount-button blue-button" onClick={() => { window.open('https://www.gopax.co.kr/exchange?market=CENT-KRW', '_blank'); }}>Gopax</div>)}
+                      {!event.isPaid && (<div className="wallet-coin-card-event-amount-button blue-button" onClick={() => { window.open('https://www.digifinex.com/en-ww/trade/USDT/CENT?tradeKind=spot', '_blank'); }}>Digifinex</div>)}
+                        <div className="wallet-coin-card-event-amount-button" onClick={() => { readEvent(event.idx); }}>{string.close}</div>
+                      </div>
+                      </div>
+                  </div>
+                )}
+              </div>
+            );
           })}
           {selectedTab == 1 && <GoodsEvent />}
         </div>

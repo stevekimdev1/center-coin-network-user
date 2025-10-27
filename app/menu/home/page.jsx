@@ -203,13 +203,20 @@ export default function Home() {
     });
   };
   const handleMiningStart = () => {
-    httpClient.post(urls.miningStart).then(res => {
-      if (res.data) {
-        getMyInfo();
-        message.success(string.miningStartSuccess);
-      }
-      else message.error(string.miningStartFailed);
-    });
+    if (typeof window.showAd === 'function') {
+        window.showAd();
+        
+        httpClient.post(urls.miningStart).then(res => {
+    
+          if (res.data) {
+            getMyInfo();
+            // message.success(string.miningStartSuccess);
+          }
+          else message.error(string.miningStartFailed);
+        });
+    } else {
+      message.error(string.sdkLoadError);
+    }
   }
   const handleNoticeClick = (notice) => {
     router.push(`/menu/notice?idx=${notice.boardIdx}`);
@@ -248,6 +255,109 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="info-grade">
+          <div className="grade-progress-container">
+            <div className="grade-progress-bar">
+              <div className="progress-track">
+                {userGradeCriteria.map((criteria, idx) => (
+                  <div key={idx} className="grade-marker" style={{ left: `${(idx / (userGradeCriteria.length - 1)) * 100}%` }}>
+                    <div className="marker-line"></div>
+                  </div>
+                ))}
+                {(() => {
+                  const currentBalance = coinList.find(item => item.coinType === 701)?.balance || 0;
+                  let currentGradeIndex = 0;
+                  for (let i = userGradeCriteria.length - 1; i >= 0; i--) {
+                    if (currentBalance >= userGradeCriteria[i]) {
+                      currentGradeIndex = i;
+                      break;
+                    }
+                  }
+                  const progressPercentage = currentGradeIndex === userGradeCriteria.length - 1 
+                    ? 100 
+                    : (currentBalance - userGradeCriteria[currentGradeIndex]) / (userGradeCriteria[currentGradeIndex + 1] - userGradeCriteria[currentGradeIndex]) * (100 / (userGradeCriteria.length - 1)) + (currentGradeIndex * (100 / (userGradeCriteria.length - 1)));
+                  
+                  return (
+                    <div className="progress-fill" style={{ width: `${Math.min(progressPercentage, 100)}%` }}>
+                      <div className="current-position" style={{ left: `${Math.min(progressPercentage, 100)}%` }}>
+                        {/* <div className="position-indicator"></div> */}
+                        {/* <div className="position-label">{string.currentGrade}</div> */}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+            <div className="grade-labels">
+              {[string.vip0, string.vip1, string.vip2, string.vip3, string.vip4, string.vip5, string.vip6].map((grade, idx) => {
+                const currentBalance = coinList.find(item => item.coinType === 701)?.balance || 0;
+                let currentGradeIndex = 0;
+                for (let i = userGradeCriteria.length - 1; i >= 0; i--) {
+                  if (currentBalance >= userGradeCriteria[i]) {
+                    currentGradeIndex = i;
+                    break;
+                  }
+                }
+                const isCurrentGrade = idx === currentGradeIndex;
+                
+                return (
+                  <div key={idx} className="grade-label">
+                    <span className="grade-amount">{userGradeCriteria[idx]/1000000}M</span>
+                    {gradeCoin[idx] && gradeCoin[idx].map((coin, idx) => {
+                      if (coin == 'GOODS') {
+                        return (
+                          <img key={idx} src={'/img/cart.png'} style={{width: '20px', height: '20px', marginTop: '4px'}}/>
+                        )
+                      }
+                      else {
+                        return (
+                          <img key={idx} src={coinList.find(item => item.symbol === coin)?.image} style={{width: '20px', height: '20px', marginTop: '4px'}}/>
+                        )
+                      }
+                    })}
+                    {/* <span className={`grade-text ${isCurrentGrade ? 'current-grade' : ''}`}>{grade}</span> */}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <div className="info-detail">
+          <div className="info-detail-box">
+            <p className="info-label">{string.referral}</p>
+            <p className="info-value">{referralList.length}{string.person}</p>
+          </div>
+          <div className="info-detail-box">
+            <p className="info-label">{string.lockup}</p>
+            <p className="info-value">{comma(coinList.find(item => item.coinType === 701)?.lockBalance)}  <span className="info-unit2">CENT</span></p>
+          </div>
+          <div className="info-detail-box">
+            <p className="info-label">{string.centerAI}</p>
+            <p className="info-value">{comma(coinList.find(item => item.coinType === 401)?.balance)} <span className="info-unit2">CAI</span></p>
+          </div>
+        </div>
+      </div>
+
+      {/* 채굴영역 */}
+      <div className="mining-box">
+        <div className="mining-header">
+          <span className="mining-title">{string.dailyMining}</span>
+          {user && user.miningStartDate && new Date() - new Date(user.miningStartDate) < 24 * 60 * 60 * 1000 ? (
+            <span className="mining-time">{string.miningInProgress}({dayjs().diff(dayjs(user.miningStartDate), 'minute') < 60 ? `${dayjs().diff(dayjs(user.miningStartDate), 'minute')}${string.minutesAgo}` : `${dayjs().diff(dayjs(user.miningStartDate), 'hour')}${string.hoursAgo}`})</span>
+          ) : (
+            <Button type="primary" className="mining-button" onClick={handleMiningStart}>{string.startMining}</Button>
+          )}
+        </div>
+        <p className="mining-speed"><b>{(baseReward * (1 + booster / 100)).toFixed(2)} CENT/d</b></p>
+        <div className="mining-progress">
+          <div className="mining-bar" style={{ width: `${user && user.miningStartDate && new Date() - new Date(user.miningStartDate) < 24 * 60 * 60 * 1000 ? (new Date() - new Date(user.miningStartDate)) / (24 * 60 * 60 * 1000) * 100 : 0}%` }}></div>
+        </div>
+        <div className="mining-power">
+          <span>{string.teamPower} {20 + minerCount * 3}%</span>
+          <span>{string.lockupPower} {user?.lockupPower?.toFixed(2)}%</span>
+        </div>
+        <RollingList items={bonusUserList} />
+
       </div>
 
       {/* 공지사항 */}

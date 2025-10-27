@@ -80,6 +80,7 @@ const string = {
   signupFail: "회원가입 처리 중 오류가 발생했습니다",
   unknownError: "알 수 없는 오류가 발생했습니다",
   signupError: "회원가입 중 오류가 발생했습니다",
+  sdkLoadError: "모바일앱에서 실행해주세요",
 
   // 비밀번호 찾기 페이지
   findPassword: "비밀번호 찾기",

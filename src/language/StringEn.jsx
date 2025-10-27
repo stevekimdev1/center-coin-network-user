@@ -72,7 +72,7 @@ const string = {
   duplicateCheckSuccess: "Email is available",
   duplicateCheckFailed: "Email is already in use",
   signupSuccess: "Sign Up Success",
-  signupSuccessMessage: "Sign up completed. Please login to use",
+  signupSuccessMessage: "Registration completed. Please login to continue",
   invalidEmailFormat: "Invalid email format",
   duplicateUserId: "Email is already in use",
   invalidPasswordFormat: "Password must be 8-15 characters with letters, numbers, and special characters",
@@ -80,6 +80,7 @@ const string = {
   signupFail: "Error occurred during sign up",
   unknownError: "Unknown error occurred",
   signupError: "Error occurred during sign up",
+  sdkLoadError: "Please run on mobile app",
 
   // 비밀번호 찾기 페이지
   findPassword: "Find Password",

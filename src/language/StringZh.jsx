@@ -72,7 +72,7 @@ const string = {
   duplicateCheckSuccess: "邮箱可用",
   duplicateCheckFailed: "邮箱已被使用",
   signupSuccess: "注册成功",
-  signupSuccessMessage: "注册完成。请登录使用",
+  signupSuccessMessage: "注册完成。请登录后使用",
   invalidEmailFormat: "邮箱格式无效",
   duplicateUserId: "邮箱已被使用",
   invalidPasswordFormat: "密码必须是8-15个字符，包含字母、数字和特殊字符",
@@ -80,6 +80,7 @@ const string = {
   signupFail: "注册时发生错误",
   unknownError: "发生未知错误",
   signupError: "注册时发生错误",
+  sdkLoadError: "请在移动应用中运行",
 
   // 비밀번호 찾기 페이지
   findPassword: "找回密码",

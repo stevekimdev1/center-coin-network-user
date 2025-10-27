@@ -72,7 +72,7 @@ const string = {
   duplicateCheckSuccess: "メールアドレスが利用可能です",
   duplicateCheckFailed: "既に使用されているメールアドレスです",
   signupSuccess: "登録成功",
-  signupSuccessMessage: "登録が完了しました。ログインしてご利用ください",
+  signupSuccessMessage: "会員登録が完了しました。ログインしてご利用ください",
   invalidEmailFormat: "無効なメール形式です",
   duplicateUserId: "既に使用されているメールアドレスです",
   invalidPasswordFormat: "パスワードは8-15文字の英数字と特殊文字の組み合わせである必要があります",
@@ -80,6 +80,7 @@ const string = {
   signupFail: "登録処理中にエラーが発生しました",
   unknownError: "不明なエラーが発生しました",
   signupError: "登録中にエラーが発生しました",
+  sdkLoadError: "モバイルアプリで実行してください",
 
   // 비밀번호 찾기 페이지
   findPassword: "パスワードを探す",

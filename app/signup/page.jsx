@@ -294,6 +294,7 @@ function SignupForm() {
                         <div className="formBox">
                             <Form.Item
                                 name="referrer"
+                                // rules={[{ required: true, message: string.referrerRequired }]}
                             >
                                 <Input
                                     prefix={<GiftOutlined />}
