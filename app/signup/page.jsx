@@ -46,26 +46,26 @@ function SignupForm() {
     }, [searchParams, form]);
 
     // 생년월일 형식 검증 함수
-    const validateBirthday = (value) => {
-        if (!value) return true; // 필수가 아니므로 빈 값은 허용
+    // const validateBirthday = (value) => {
+    //     if (!value) return true; // 필수가 아니므로 빈 값은 허용
         
-        // yyyymmdd 형식 검증
-        const birthdayRegex = /^\d{8}$/;
-        if (!birthdayRegex.test(value)) {
-            return false;
-        }
+    //     // yyyymmdd 형식 검증
+    //     const birthdayRegex = /^\d{8}$/;
+    //     if (!birthdayRegex.test(value)) {
+    //         return false;
+    //     }
         
-        const year = parseInt(value.substring(0, 4));
-        const month = parseInt(value.substring(4, 6));
-        const day = parseInt(value.substring(6, 8));
+    //     const year = parseInt(value.substring(0, 4));
+    //     const month = parseInt(value.substring(4, 6));
+    //     const day = parseInt(value.substring(6, 8));
         
-        // 유효한 날짜인지 검증
-        const date = new Date(year, month - 1, day);
-        return date.getFullYear() === year && 
-               date.getMonth() === month - 1 && 
-               date.getDate() === day &&
-               year >= 1900 && year <= new Date().getFullYear();
-    };
+    //     // 유효한 날짜인지 검증
+    //     const date = new Date(year, month - 1, day);
+    //     return date.getFullYear() === year && 
+    //            date.getMonth() === month - 1 && 
+    //            date.getDate() === day &&
+    //            year >= 1900 && year <= new Date().getFullYear();
+    // };
 
     const handleIdCheck = async () => {
         try {
@@ -105,7 +105,7 @@ function SignupForm() {
             setLoading(true);
             const signupData = {
                 ...values,
-                birthday: values.birthday || null // 생년월일이 없으면 null로 설정
+                // birthday: values.birthday || null // 생년월일이 없으면 null로 설정
             };
 
             const response = await httpClient.post(urls.signup, signupData);
@@ -266,7 +266,7 @@ function SignupForm() {
                             </Form.Item>
                         </div> */}
 
-                        <div className="formBox">
+                        {/* <div className="formBox">
                             <Form.Item
                                 name="birthday"
                                 rules={[
@@ -289,7 +289,7 @@ function SignupForm() {
                                     maxLength={8}
                                 />
                             </Form.Item>
-                        </div>
+                        </div> */}
 
                         <div className="formBox">
                             <Form.Item
