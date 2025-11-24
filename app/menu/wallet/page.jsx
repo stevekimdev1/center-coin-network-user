@@ -62,7 +62,7 @@ const Wallet = () => {
         <div className="wallet-coin-list">
           <div className="wallet-coin-list-tab">
             <div className={`wallet-coin-title ${selectedTab == 0 ? 'active' : ''}`} onClick={() => { setSelectedTab(0); }}>{string.ownedCoins}</div>
-            <div className={`wallet-coin-title ${selectedTab == 1 ? 'active' : ''}`} onClick={() => { setSelectedTab(1); }}>{string.goodsEvent}</div>
+            {/* <div className={`wallet-coin-title ${selectedTab == 1 ? 'active' : ''}`} onClick={() => { setSelectedTab(1); }}>{string.goodsEvent}</div> */}
           </div>
           {selectedTab == 0 && coinList.map((coin, index) => {
             const event = miningEventList.find(e => e.coinType == coin.coinType);
