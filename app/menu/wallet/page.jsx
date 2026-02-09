@@ -65,6 +65,7 @@ const Wallet = () => {
             {/* <div className={`wallet-coin-title ${selectedTab == 1 ? 'active' : ''}`} onClick={() => { setSelectedTab(1); }}>{string.goodsEvent}</div> */}
           </div>
           {selectedTab == 0 && coinList.map((coin, index) => {
+            if (coin.coinType == 701) return;
             const event = miningEventList.find(e => e.coinType == coin.coinType);
             return (
               <div key={index} className="wallet-coin-card">

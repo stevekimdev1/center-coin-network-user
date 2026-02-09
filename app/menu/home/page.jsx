@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Button, App } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, App, Modal } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import RollingList from './rollingList';
 import Image from 'next/image';
@@ -63,6 +63,35 @@ export default function Home() {
   const [showAd, setShowAd] = useState(false);
   const observerRef = useRef();
   const [gradeCoin, setGradeCoin] = useState({});
+  const [rwaModalOpen, setRwaModalOpen] = useState(false);
+  const [rwaSetting, setRwaSetting] = useState(null);
+  const [rwaSettingLoading, setRwaSettingLoading] = useState(false);
+  const [rwaSettingError, setRwaSettingError] = useState(false);
+
+  const fetchRwaSetting = useCallback(async () => {
+    setRwaSettingLoading(true);
+    setRwaSettingError(false);
+    try {
+      const res = await httpClient.get(urls.rwaSetting);
+      setRwaSetting(res.data ?? null);
+    } catch (e) {
+      setRwaSettingError(true);
+      setRwaSetting(null);
+    } finally {
+      setRwaSettingLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (rwaModalOpen) fetchRwaSetting();
+  }, [rwaModalOpen, fetchRwaSetting]);
+
+  const youtubeToEmbedUrl = (url) => {
+    if (!url || typeof url !== 'string') return '';
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+  };
+
   useEffect(() => {
     getMyInfo();
     fetchSystemSetting();
@@ -382,10 +411,83 @@ export default function Home() {
 
       {/* 버튼영역 */}
       <div className="link-buttons">
-        <Link href="/menu/faq" className="link-button">FAQ</Link>
+        <button type="button" className="link-button rwa-button" onClick={() => setRwaModalOpen(true)}>
+          실물자산(RWA)<br />Live 현황
+        </button>
         <Link href="https://naver.me/GWeMeeXB" className="link-button" target="_blank">{string.whitepaper}</Link>
         <Link href="https://centercoin.co.kr/" className="link-button" target="_blank">{string.centerCoin}</Link>
       </div>
+
+      {/* 실물자산(RWA) Live 현황 - 전체화면 유튜브 팝업 */}
+      <Modal
+        open={rwaModalOpen}
+        onCancel={() => setRwaModalOpen(false)}
+        footer={null}
+        width="100%"
+        styles={{ body: { padding: 0 } }}
+        style={{ maxWidth: '100%', paddingBottom: 0 }}
+        closeIcon={<CloseOutlined className="rwa-modal-close-icon" />}
+        wrapClassName="rwa-video-modal"
+      >
+        <div className="rwa-modal-intro">
+          {rwaSetting && rwaSetting.isActive === 1 && <div className="rwa-modal-intro-badge">LIVE</div>}
+          <h2 className="rwa-modal-intro-title">실물자산(RWA) 공장 현황</h2>
+          <p className="rwa-modal-intro-time">방송 시간: <br/>월요일 ~ 금요일(10:00 ~ 18:00)</p>
+          <div className="rwa-modal-intro-divider" />
+          <p className="rwa-modal-intro-desc">
+            경기도 소재 센터코인 건강음료 공장 내부를 실시간으로 공개합니다.
+            투명한 운영을 위해 평일 오전 10시부터 오후 6시까지 공장 CCTV를 스트리밍합니다.
+          </p>
+          <p className="rwa-modal-intro-desc">
+            본 공장은 <strong>HACCP 인증</strong> 시설로, 원료 입고부터 충진·포장·출하에 이르기까지
+            전 공정을 체계적으로 관리하며 건강음료를 안전하게 생산합니다.
+          </p>
+        </div>
+        {rwaSettingLoading && (
+          <div className="rwa-modal-video-area rwa-modal-loading">
+            <div className="rwa-modal-spinner" />
+            <p>불러오는 중...</p>
+          </div>
+        )}
+        {!rwaSettingLoading && rwaSettingError && (
+          <div className="rwa-modal-video-area rwa-modal-off">
+            <p>설정을 불러올 수 없습니다.</p>
+          </div>
+        )}
+        {/* 영상 임베드 (필요 시 주석 해제하여 복구) */}
+        {/* {!rwaSettingLoading && !rwaSettingError && rwaSetting && rwaSetting.isActive === 1 && rwaSetting.movieUrl && (
+          <div className="rwa-video-wrap" style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', background: '#000' }}>
+            <iframe
+              width="100%"
+              height="100%"
+              src={youtubeToEmbedUrl(rwaSetting.movieUrl)}
+              title="실물자산(RWA) Live 현황"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+            />
+          </div>
+        )} */}
+        {!rwaSettingLoading && !rwaSettingError && rwaSetting && rwaSetting.isActive === 1 && (
+            <a
+              className="rwa-youtube-link"
+              href="https://www.youtube.com/@centercoinfactory/live"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="rwa-youtube-link-icon" aria-hidden>▶</span>
+              <span className="rwa-youtube-link-text">YouTube Live</span>
+            </a>
+        )}
+        {!rwaSettingLoading && !rwaSettingError && (!rwaSetting || rwaSetting.isActive !== 1) && (
+          <div className="rwa-modal-video-area rwa-modal-off">
+            <div className="rwa-modal-off-icon" />
+            <p className="rwa-modal-off-title">현재 라이브 방송 중이 아닙니다</p>
+            <p className="rwa-modal-off-desc">방송 시간: 월요일 ~ 금요일 10:00 ~ 18:00</p>
+          </div>
+        )}
+      </Modal>
 
       {/* 피드영역 */}
       <div className="feed-list">

@@ -102,7 +102,7 @@ const ReferralPage = () => {
                   ? m.id.slice(0, 4) + '*'
                   : m.id}
               </div>
-              <Tag color={m.isMining ? 'blue' : 'default'}>{m.isMining ? string.miningInProgress : string.miningStopped}</Tag>
+              {/* <Tag color={m.isMining ? 'blue' : 'default'}>{m.isMining ? string.miningInProgress : string.miningStopped}</Tag> */}
               <div className="amount">+{(m.teamPower+m.lockupPower).toFixed(2)}%</div>
             </div>
           ))
